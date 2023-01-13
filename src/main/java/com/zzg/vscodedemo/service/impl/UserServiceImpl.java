@@ -1,6 +1,8 @@
 package com.zzg.vscodedemo.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Maps;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 @Slf4j
 @Service
@@ -23,16 +27,21 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public Map queryAllUsers(int current, int size) {
-        IPage<User> page = new Page<>(current, size);
-        log.info("json分页数据{}", JSON.toJSONString(page));
-        IPage<User> users = userMapper.selectPage(page, null);
+    public Map queryAllUsers(Integer num, Integer size) {
+        if (num == null) {
+            num = 0;
+        }
+        if (size == null) {
+            num = 10;
+        }
+        Page<User> page = new Page<>(num, size);
+        page.setOptimizeCountSql(false);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().ge("id", 2);
+        Page<User> users = userMapper.selectPage(page, queryWrapper);
+        System.out.println("总页数： " + users.getPages());
+        System.out.println("总记录数： " + users.getTotal());
+        users.getRecords().forEach(System.out::println);
 
-        log.info("data数据{}", JSON.toJSONString(users));
-        HashMap<@Nullable String, @Nullable Object> data = Maps.newHashMap();
-        data.put("code", 200);
-        data.put("msg", "success");
-        data.put("data", JSON.toJSON(users));
-        return data;
+        return null;
     }
 }

@@ -13,5 +13,5 @@ public interface UserService {
      * @param pageSize 条数
      * @return
      */
-    Map queryAllUsers(int page, int pageSize);
+    Map queryAllUsers(Integer page, Integer pageSize);
 }
